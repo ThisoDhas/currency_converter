@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container{
+            height:100vh;
+            width:100%;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            background-color: gray;
+        }
+        h2{
+           color:rgb(65, 65, 181);
+           text-align: center;
+        }
+        .display{
+            background-color: black;
+            height:200px;
+            width:400px;
+            border-radius: 20px;
+        }
+        .display select{
+            width:150px;
+            height:25px;
+            margin-left: 30px;
+            border-radius: 20px;
+            background-color: orange;
+            
+        }
+        .display input{
+            margin-top: 15px;
+            width:150px;
+            height:25px;
+            margin-left: 30px;
+            border-radius: 20px;
+            background-color: gray;
+            text-align:center;
+        }
+        button{
+            margin-top: 15px;
+            width:150px;
+            height:40px;
+            margin-left: 130px;
+            border-radius: 20px;
+            color:blue;
+            background-color: orange;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="display">
+            <h2>Currency Converter</h2>
+            <select class="country" id="country1">
+                
+            </select>
+            <select class="country" id="country2">
+                
+            </select>
+            <input type="number" id="input">
+            <input type="number" id="output" style="margin-left:20px"><br>
+            <button id="btn">Convert</button>
+
+        </div>
+    </div>
+
+    <script>
+        const dropdown1 = document.getElementById("country1");
+        const dropdown2 = document.getElementById("country2");
+         let btn=document.getElementById("btn")
+        const output = document.getElementById("output");
+
+        fetch("https://api.frankfurter.app/currencies")
+        .then((response) => {
+            if (!response.ok){
+                throw new Error("Network response was not ok");
+            } else {
+                return response.json();
+            }
+        })
+        .then((res) => {
+            display(res);
+        });
+
+        function display(res) {
+            let num = Object.entries(res);
+            for (let i = 0; i < num.length; i++) {
+                let option1 = document.createElement("option");
+                option1.text = num[i][0];
+                dropdown1.appendChild(option1);
+                let option2 = document.createElement("option");                
+                option2.text = num[i][0];
+                dropdown2.appendChild(option2);
+            }
+        }
+        btn.addEventListener("click",answer)
+         function answer(){
+             let curr1=dropdown1.value;
+             let curr2=dropdown2.value;
+
+            const input = Number(document.getElementById("input").value)
+            const host = 'api.frankfurter.app'
+            fetch(`https://${host}/latest?amount=${input}&from=${curr1}&to=${curr2}`)
+            .then((msg)=>((msg.json())))
+            .then((data)=>{  
+                document.getElementById("output").value= Object.values(data.rates)[0]
+        })           
+         }
+    </script>
+</body>
+</html>
